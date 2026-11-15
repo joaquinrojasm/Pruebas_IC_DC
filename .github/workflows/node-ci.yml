@@ -1,0 +1,38 @@
+name: Node CI - Tests & Audit
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Validar sintaxis JavaScript
+        run: node --check evidencia/ci-sintaxis.js
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Auditar dependencias
+        continue-on-error: true
+        run: npm audit --json > npm-audit.json
+
+      - name: Guardar reporte de auditoría
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit
+          path: npm-audit.json
+
+      - name: Ejecutar pruebas
+        run: npm test
+
