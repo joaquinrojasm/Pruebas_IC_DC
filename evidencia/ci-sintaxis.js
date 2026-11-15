@@ -1,1 +1,1 @@
-console.log("Validación de sintaxis del laboratorio");
+console.log("Falta cerrar paréntesis"
